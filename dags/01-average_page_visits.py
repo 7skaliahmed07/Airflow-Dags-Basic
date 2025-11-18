@@ -6,6 +6,7 @@ import random
 from airflow.decorators import dag,task
 from airflow.operators.python import get_current_context
 
+# 1 - SCANS : All Files and Come to this dag as per its matchign name
 @dag(
     dag_id="average_page_visit",
     start_date=datetime(2025, 1, 1),
@@ -15,6 +16,7 @@ from airflow.operators.python import get_current_context
     tags=["analytics", "page_visits"]  
 )
 
+# 2 - Python CALLS this MAIN METHOD
 def average_page_visits():
     
     def get_data_path():
@@ -23,6 +25,7 @@ def average_page_visits():
         file_date = execution_date.strftime("%Y-%m-%d_%H%M")
         return f"/tmp/page_visits/{file_date}.json"
     
+    # 3 - Tasks get registred
     @task
     def produce_page_visits_data():
 
@@ -44,6 +47,7 @@ def average_page_visits():
 
         print(f"Written to file: {file_path}")
 
+    # 3 - Tasks get registred
     @task
     def process_page_visits_data():
         file_path = get_data_path()
@@ -57,3 +61,11 @@ def average_page_visits():
     produce_page_visits_data() >> process_page_visits_data()
 
 demo_dag = average_page_visits()
+
+
+# Procedure :
+# 1. Python runs this file
+# 2. average_page_visits() function gets CALLED
+# 3. All @task functions inside get registered
+# 4. Workflow structure is built
+# 5. @dag decorator returns a DAG object
